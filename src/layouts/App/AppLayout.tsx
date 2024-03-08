@@ -19,8 +19,8 @@ export const AppLayout: React.FC<AppLayoutProps> = (props) => {
     height: '100vh'
   }}>
     <div style={{
-      width: '80%',
-      margin: '20px'
+      margin: '20px',
+      width: '50%',
     }}>
       {buttons}
     </div>

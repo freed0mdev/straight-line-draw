@@ -16,6 +16,7 @@ const formatPoint = (point: Point | null) => {
 }
 
 function LinePoints({lineNumber, line}: LinePointsProps) {
+  if(!line) return (<li></li>);
   const {start, end} = line;
   const startPointFormatted = formatPoint(start);
   const endPointFormatted = formatPoint(end);

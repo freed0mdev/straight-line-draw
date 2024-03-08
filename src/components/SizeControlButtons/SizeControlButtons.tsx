@@ -10,11 +10,12 @@ const BUTTONS_CONFIG = [
 ];
 
 interface SizeControlButtonsProps {
-  onCanvasSizeChange: (dimension: Dimension) => void;
+  onCanvasSizeChange?: (dimension: Dimension) => void;
 }
 
 export const SizeControlButtons: React.FC<SizeControlButtonsProps> = ({onCanvasSizeChange}) => {
   const handleCanvasSizeChange = (dimension: Dimension) => () => {
+    if(!onCanvasSizeChange) return;
     onCanvasSizeChange(dimension);
   };
 

@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect} from 'react';
+import React, {useState, useRef, useEffect, useCallback} from 'react';
 import {Dimension, Line} from '../../types';
 import {LINE_COLOR_ACTIVE} from '../../constants';
 import {useDraw} from '../../hooks/useDraw';
@@ -30,12 +30,12 @@ const LinesCanvas: React.FC<LinesCanvasProps> = ({
   const [lineList, setLineList] = useState<Line[]>([]);
   const [currentLine, setCurrentLine] = useState<Line>(currentLineInitialState);
 
-  const handleLineListUpdated = (lineList: Line[]) => {
+  const handleLineListUpdated = useCallback((lineList: Line[]) => {
     setLineList(lineList);
     if (onLineListUpdated) {
       onLineListUpdated(lineList);
     }
-  }
+  }, [onLineListUpdated]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -52,7 +52,7 @@ const LinesCanvas: React.FC<LinesCanvasProps> = ({
     }
   }, [lineList, currentLine, clearCanvas, drawMultipleLines, drawLine]);
 
-  const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
+  const handleMouseDown = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
     if (!canvasRef.current || currentLine.start) return;
 
     const canvasMouseCoordinates = getCanvasMouseCoordinates(e, canvasRef.current);
@@ -63,23 +63,23 @@ const LinesCanvas: React.FC<LinesCanvasProps> = ({
       start: canvasMouseCoordinates,
       end: canvasMouseCoordinates,
     });
-  };
+  }, [currentLine.start, getCanvasMouseCoordinates]);
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
     if (!currentLine.start || !canvasRef.current) return;
 
     setCurrentLine({
       start: currentLine.start,
       end: getLineDirectionEndPoint(getCanvasMouseCoordinates(e, canvasRef.current)!, currentLine)
     });
-  };
+  }, [currentLine, getCanvasMouseCoordinates, getLineDirectionEndPoint]);
 
-  const handleMouseUp = () => {
+  const handleMouseUp = useCallback(() => {
     if (!currentLine.start || !currentLine.end) return;
 
     handleLineListUpdated([...lineList, {start: currentLine.start, end: currentLine.end}]);
     setCurrentLine({start: null, end: null});
-  };
+  }, [currentLine, lineList, handleLineListUpdated]);
 
   return (
     <canvas
